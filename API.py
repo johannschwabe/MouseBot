@@ -13,7 +13,7 @@ bot = telegram.Bot(token)
 t = open("chat_ids.txt", "r")
 chat_ids = [int(_id) for _id in t.readlines()]
 
-trap_collection = TrapCollection()
+trap_collection = TrapCollection.recover()
 
 app = FastAPI()
 origins = [
@@ -41,8 +41,7 @@ def catch(_catch: "APIId"):
 
 @app.post("/open")
 def reopen(_catch: "APIId"):
-    trap = trap_collection.get_trap(_catch.trap_id)
-    trap.change(_open=True)
+    trap_collection.open(_catch.trap_id)
 
 
 @app.post("/register")
@@ -52,8 +51,8 @@ def register(trap: "APITrap"):
 
 
 @app.post("/healthcheck")
-def healthcheck(trap: "APIId"):
-    trap_collection.get_trap(trap.trap_id).healthcheck_success()
+def healthcheck(trap: "APITrap"):
+    trap_collection.open(trap.trap_id, trap.open)
 
 
 @app.post("/remove")
@@ -63,7 +62,7 @@ def remove(trap: "APIId"):
 
 @app.post("/rename")
 def rename(trap: "APITrap"):
-    trap_collection.get_trap(trap.trap_id).name = trap.trap_name
+    trap_collection.rename(trap.trap_id, trap.trap_name)
 
 
 @app.get("/status")

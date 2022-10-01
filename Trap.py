@@ -18,8 +18,9 @@ class Trap:
         healthcheck = '🟢' if self.is_alive() else '🔴'
         return f"{self.name}: Catch: {catch}, responding: {healthcheck}"
 
-    def healthcheck_success(self):
+    def healthcheck_success(self, _open: bool):
         self.health_check = time.time()
+        self.open = _open
 
     def change(self, _open: bool):
         self.open = _open
@@ -32,3 +33,16 @@ class Trap:
 
     def __hash__(self):
         return hash(self.id)
+
+    def __str__(self):
+        return f"{self.id}|{self.name}|{self.open}|{self.latest_change}|{self.health_check}"
+
+    @staticmethod
+    def recover(stringified: str):
+        split = stringified.split("|")
+        assert len(split) == 5
+        new_trap = Trap(split[0], split[1], split[2] == "True")
+        new_trap.latest_change = float(split[3])
+        new_trap.health_check = float(split[4])
+        return new_trap
+
