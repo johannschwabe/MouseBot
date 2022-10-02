@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 
 
-class APIId(BaseModel):
-    trap_id: str
+class APIName(BaseModel):
+    trap_name: str
 
+class APINameChange(BaseModel):
+    old: str
+    new: str
 
 class APITrap(BaseModel):
-    trap_id: str
     trap_name: str
     open: bool
