@@ -3,7 +3,8 @@ import time
 
 
 class Trap:
-    def __init__(self, name: str, _open: bool):
+    def __init__(self, _id: str, name: str, _open: bool):
+        self.id = _id
         self.name = name
         self.open = _open
         self.latest_change = time.time()
@@ -18,6 +19,7 @@ class Trap:
         return f"{self.name}: Catch: {catch}, responding: {healthcheck}"
 
     def healthcheck_success(self, _open: bool):
+        print(f"Health checked: {self.name}, {'open' if self.open else 'closed'}")
         self.health_check = time.time()
         self.open = _open
 
@@ -28,20 +30,20 @@ class Trap:
 
     def __eq__(self, other):
         assert isinstance(other, Trap)
-        return self.name == other.name
+        return self.id == other.id
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.id)
 
     def __str__(self):
-        return f"{self.name}|{self.open}|{self.latest_change}|{self.health_check}"
+        return f"{self.id}|{self.name}|{self.open}|{self.latest_change}|{self.health_check}"
 
     @staticmethod
     def recover(stringified: str):
         split = stringified.split("|")
-        assert len(split) == 4
-        new_trap = Trap(split[0], split[1] == "True")
-        new_trap.latest_change = float(split[2])
-        new_trap.health_check = float(split[3])
+        assert len(split) == 5
+        new_trap = Trap(split[0],split[1], split[2] == "True")
+        new_trap.latest_change = float(split[3])
+        new_trap.health_check = float(split[4])
         return new_trap
 

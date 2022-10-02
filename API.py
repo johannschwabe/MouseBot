@@ -1,8 +1,8 @@
-from fastapi import HTTPException, FastAPI
+from fastapi import HTTPException, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import telegram
 
-from APIObjects import APITrap, APIName, APINameChange
+from APIObjects import APITrap, APIName, APINameChange, APIId
 from Trap import Trap
 from TrapCollection import TrapCollection
 
@@ -32,28 +32,27 @@ app.add_middleware(
 
 
 @app.post("/catch")
-def catch(_catch: "APIName"):
-    trap = trap_collection.get_trap(_catch.trap_name)
+def catch(_catch: "APIId"):
+    trap = trap_collection.get_trap(_catch.trap_id)
     trap.change(_open=False)
     for chat_id in chat_ids:
         bot.send_message(text=f"🐭 in {trap.name}", chat_id=chat_id)
 
 
 @app.post("/open")
-def reopen(_catch: "APIName"):
-    trap_collection.open(_catch.trap_name)
+def reopen(_catch: "APIId"):
+    trap_collection.open(_catch.trap_id)
 
 
 @app.post("/register")
 def register(trap: "APITrap"):
-    new_trap = Trap(trap.trap_name.replace(" ", "_"), trap.open)
+    new_trap = Trap(trap.trap_id, trap_collection.next_name(), trap.open)
     trap_collection.add_trap(new_trap)
 
 
 @app.post("/healthcheck")
-def healthcheck(trap: "APITrap"):
-    trap_collection.open(trap.trap_name, trap.open)
-
+def healthcheck(trap: "APITrap", ):
+    trap_collection.healthcheck(trap.trap_id, trap.open)
 
 @app.post("/remove")
 def remove(trap: "APIName"):
@@ -68,3 +67,4 @@ def rename(change: "APINameChange"):
 @app.get("/status")
 def status():
     return {"status": trap_collection.get_status()}
+

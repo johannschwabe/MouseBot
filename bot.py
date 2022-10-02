@@ -8,7 +8,7 @@ import traceback
 import sys
 
 protocol = "http"
-ip = "localhost"
+ip = "192.168.188.116"
 port = "8000"
 chat_ids = []
 
@@ -56,10 +56,6 @@ def unknown(update: telegram.Update, context: CallbackContext):
     update.message.reply_text("🤯")
 
 
-def error_handler(update: telegram.Update, context: "CallbackContext") -> None:
-    context.bot.send_message(chat_id=update.message.chat_id, text=f"Internal Error.", parse_mode=telegram.ParseMode.MARKDOWN)
-
-
 if __name__ == '__main__':
     # Read my personal bot token out of the token.txt file which is not uploaded to GitHub, and hand it to the updater.
 
@@ -74,7 +70,6 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("remove", remove, pass_args=True))
     dispatcher.add_handler(CommandHandler("rename", rename, pass_args=True))
     dispatcher.add_handler(MessageHandler(Filters.command, unknown))
-    dispatcher.add_error_handler(error_handler)
 
     for chat_id in chat_ids:
         updater.bot.send_message(text="hi", chat_id=chat_id)
