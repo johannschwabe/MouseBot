@@ -19,9 +19,10 @@ class Trap:
         return f"{self.name}: Catch: {catch}, responding: {healthcheck}"
 
     def healthcheck_success(self, _open: bool):
-        print(f"Health checked: {self.name}, {'open' if self.open else 'closed'}")
         self.health_check = time.time()
         self.open = _open
+        print(f"Health checked: {self.name}, {'open' if self.open else 'closed'}")
+
 
     def change(self, _open: bool):
         self.open = _open

@@ -51,6 +51,12 @@ class TrapCollection:
         trap.change(_open=True)
         self.persit()
 
+    def close(self, trap_id: str):
+        trap = self.get_trap(trap_id)
+        trap.change(_open=False)
+        self.persit()
+        return trap
+
     def healthcheck(self, trap_id: str, _open: bool):
         self.get_trap(trap_id).healthcheck_success(_open)
         self.persit()

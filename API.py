@@ -33,8 +33,7 @@ app.add_middleware(
 
 @app.post("/catch")
 def catch(_catch: "APIId"):
-    trap = trap_collection.get_trap(_catch.trap_id)
-    trap.change(_open=False)
+    trap = trap_collection.close(_catch.trap_id)
     for chat_id in chat_ids:
         bot.send_message(text=f"🐭 in {trap.name}", chat_id=chat_id)
 
@@ -58,6 +57,9 @@ def healthcheck(trap: "APITrap", ):
 def remove(trap: "APIName"):
     trap_collection.remove(trap.trap_name)
 
+@app.post("/clear")
+def clear():
+    trap_collection.clear()
 
 @app.post("/rename")
 def rename(change: "APINameChange"):

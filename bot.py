@@ -40,6 +40,15 @@ def remove(update: telegram.Update, context: CallbackContext):
         update.message.reply_text("👎")
 
 
+def clear(update: telegram.Update, context: CallbackContext):
+    res = requests.post(f"{protocol}://{ip}:{port}/remove",
+                        headers={"Content-Type": "application/json"})
+    if res.status_code < 300:
+        update.message.reply_text("👍")
+    else:
+        update.message.reply_text("👎")
+
+
 def rename(update: telegram.Update, context: CallbackContext):
     if len(context.args) != 2:
         update.message.reply_text("👎")
@@ -69,6 +78,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("status", status))
     dispatcher.add_handler(CommandHandler("remove", remove, pass_args=True))
     dispatcher.add_handler(CommandHandler("rename", rename, pass_args=True))
+    dispatcher.add_handler(CommandHandler("clear", clear))
     dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
     for chat_id in chat_ids:
