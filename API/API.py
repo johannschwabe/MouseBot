@@ -6,11 +6,11 @@ from APIObjects import APITrap, APIName, APINameChange, APIId
 from Trap import Trap
 from TrapCollection import TrapCollection
 
-f = open(".secrets", "r")
+f = open("../.secrets", "r")
 token = f.readlines()[0]
 bot = telegram.Bot(token)
 
-t = open("chat_ids.txt", "r")
+t = open("../chat_ids.txt", "r")
 chat_ids = [int(_id) for _id in t.readlines()]
 
 trap_collection = TrapCollection.recover()

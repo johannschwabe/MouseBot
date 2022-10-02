@@ -21,7 +21,7 @@ def start(update: telegram.Update, context: CallbackContext):
                              parse_mode=telegram.ParseMode.MARKDOWN)
     if update.message.chat_id not in chat_ids:
         chat_ids.append(update.message.chat_id)
-        t = open("chat_ids.txt", "a")
+        t = open("../chat_ids.txt", "a")
         t.write(f"{str(update.message.chat_id)}\n")
 
 
@@ -68,7 +68,7 @@ def unknown(update: telegram.Update, context: CallbackContext):
 if __name__ == '__main__':
     # Read my personal bot token out of the token.txt file which is not uploaded to GitHub, and hand it to the updater.
 
-    f = open(".secrets", "r")
+    f = open("../.secrets", "r")
     token = f.readlines()[0]
     updater = Updater(token)
     dispatcher: "Dispatcher" = updater.dispatcher

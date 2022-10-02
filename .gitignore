@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 /.secrets
 /chat_ids.txt
+/ArduinoMKR/arduino_secrets.h
+/ArduinoMKR/.idea/
