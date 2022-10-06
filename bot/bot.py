@@ -8,7 +8,7 @@ import traceback
 import sys
 
 protocol = "http"
-ip = "192.168.188.116"
+ip = "localhost"
 port = "8000"
 chat_ids = []
 
