@@ -41,7 +41,7 @@ def remove(update: telegram.Update, context: CallbackContext):
 
 
 def clear(update: telegram.Update, context: CallbackContext):
-    res = requests.post(f"{protocol}://{ip}:{port}/remove",
+    res = requests.post(f"{protocol}://{ip}:{port}/clear",
                         headers={"Content-Type": "application/json"})
     if res.status_code < 300:
         update.message.reply_text("👍")
