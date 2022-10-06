@@ -88,7 +88,9 @@ class TrapCollection:
                 with open(potential_filename) as file:
                     for line in file.readlines():
                         recovered_trap = Trap.recover(line)
-                        new_trap_collection.traps[recovered_trap.name] = recovered_trap
+                        new_trap_collection.traps[recovered_trap.id] = recovered_trap
+                        new_trap_collection.names[recovered_trap.name] = recovered_trap.id
+
                 break
             else:
                 current_timestamp -= 24 * 60 * 60
