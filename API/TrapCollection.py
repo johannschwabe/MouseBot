@@ -19,7 +19,7 @@ class TrapCollection:
         self.persit()
 
     def get_status(self):
-        res = ""
+        res = "Status:\n"
         for trap in self.traps.values():
             res += trap.get_status() + "\n"
         return res
