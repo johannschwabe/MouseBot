@@ -31,6 +31,8 @@ app.add_middleware(
 )
 
 
+VOLTAGE_LIMIT = 3700
+
 @app.post("/catch")
 def catch(_catch: "APIId"):
     trap = trap_collection.close(_catch.trap_id)
@@ -43,15 +45,12 @@ def reopen(_catch: "APIId"):
     trap_collection.open(_catch.trap_id)
 
 
-@app.post("/register")
-def register(trap: "APITrap"):
-    new_trap = Trap(trap.trap_id, trap_collection.next_name(), trap.open)
-    trap_collection.add_trap(new_trap)
-
-
 @app.post("/healthcheck")
 def healthcheck(trap: "APITrap", ):
-    trap_collection.healthcheck(trap.trap_id, trap.open)
+    trap_name = trap_collection.healthcheck(trap.trap_id, trap.open, trap.voltage)
+    if trap.voltage < VOLTAGE_LIMIT:
+        for chat_id in chat_ids:
+            bot.send_message(text=f"🐭 in {trap_name}", chat_id=chat_id)
 
 @app.post("/remove")
 def remove(trap: "APIName"):
