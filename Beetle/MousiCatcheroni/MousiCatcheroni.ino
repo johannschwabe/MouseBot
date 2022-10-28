@@ -6,11 +6,12 @@
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 WiFiClient client;
-char base_addr[] = "192.168.188.116";
+char base_addr[] = "192.168.4.1";
 int port = 8000;
 
 const gpio_num_t BUTTON_PIN = GPIO_NUM_0;
-String trap_id = "1";
+String trap_id = "2";
+float correnction_factor = 1.39; //1->1.373, 2->1.39
 
 
 void setup() {
@@ -18,14 +19,14 @@ void setup() {
   //delay(2000);
   //Serial.begin(9600);
   setupWifi();
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
   float voltage = get_voltage();
 
-  if(cause == ESP_SLEEP_WAKEUP_TIMER){
+  if(cause == ESP_SLEEP_WAKEUP_TIMER || cause == ESP_SLEEP_WAKEUP_UNDEFINED){
     postData("{\"trap_id\": \""+ trap_id +"\",\"open\": " + isOpen() +", \"voltage\":"+String(voltage)+"}", "healthcheck");
   } else {
-    pinMode(BUTTON_PIN, INPUT_PULLUP);
     change();
   }
 
@@ -38,14 +39,14 @@ void setup() {
   }
   esp_deep_sleep_enable_gpio_wakeup(0x1, mode);
 
-
-
-  //delay(2000);
-
   esp_deep_sleep_start();
+
 }
 
-void loop(){}
+void loop(){
+  // Serial.println("isOpen: " + isOpen());
+  // delay(100);
+}
 
 void change(){
   String is_open = isOpen();
@@ -60,7 +61,7 @@ void change(){
 String isOpen(){
   int open = digitalRead(BUTTON_PIN);
   String trap_open = "true";
-  if(open == 1){
+  if(open == 0){
     trap_open = "false";
   }
   return trap_open;
@@ -83,7 +84,7 @@ float get_voltage(){
   for(int i = 0; i < num_iter; ++i){
     sum += analogRead(GPIO_NUM_1);
   }
-  return sum/(num_iter * 1.373 / 2);
+  return sum/(num_iter * correnction_factor / 2);
 }
 
 void setupWifi(){
