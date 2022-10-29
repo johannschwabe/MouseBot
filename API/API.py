@@ -11,7 +11,7 @@ token = f.readlines()[0]
 bot = telegram.Bot(token)
 
 t = open("../chat_ids.txt", "r")
-chat_ids = [int(_id) for _id in t.readlines()]
+chat_ids = set([int(_id) for _id in t.readlines()])
 
 trap_collection = TrapCollection.recover()
 

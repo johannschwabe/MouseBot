@@ -16,7 +16,7 @@ float correnction_factor = 1.39; //1->1.373, 2->1.39
 
 void setup() {
   //Initialize serial and wait for port to open:
-  //delay(2000);
+  delay(2000);
   //Serial.begin(9600);
   setupWifi();
   pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -90,15 +90,18 @@ float get_voltage(){
 void setupWifi(){
   WiFi.mode(WIFI_STA);
   WiFi.setHostname(("Trap_"+trap_id).c_str());
+
   WiFi.begin(ssid, pass);
   //Serial.print("Attempting to connect to network: ");
   //Serial.println(ssid);
   while (WiFi.status() != WL_CONNECTED) {
-    //Serial.print(".");
+    Serial.print(WiFi.status());
 
     //WiFi.lowPowerMode();
     // wait 10 seconds for connection:
-    delay(1000);
+    delay(10000);
+
+
   }
   //Serial.println(WiFi.localIP());
   //Serial.println("You're connected to the network");

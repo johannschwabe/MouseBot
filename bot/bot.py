@@ -21,8 +21,7 @@ def start(update: telegram.Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.message.chat_id,
                              text='Action Stations!',
                              parse_mode=telegram.ParseMode.MARKDOWN)
-    print(update.message.chat_id)
-    print(chat_ids)
+
     if update.message.chat_id not in chat_ids:
         chat_ids.append(update.message.chat_id)
         t = open("../chat_ids.txt", "a")
