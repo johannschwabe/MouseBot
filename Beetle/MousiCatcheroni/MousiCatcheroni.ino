@@ -95,7 +95,7 @@ void setupWifi(){
   //Serial.print("Attempting to connect to network: ");
   //Serial.println(ssid);
   while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(WiFi.status());
+    //Serial.print(WiFi.status());
 
     //WiFi.lowPowerMode();
     // wait 10 seconds for connection:

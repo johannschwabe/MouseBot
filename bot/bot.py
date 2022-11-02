@@ -4,8 +4,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 import datetime
 import requests
 import json
-import traceback
-import sys
+TIME_OUT = 10
 
 protocol = "http"
 # ip = "localhost"
@@ -29,14 +28,14 @@ def start(update: telegram.Update, context: CallbackContext):
 
 
 def status(update: telegram.Update, context: CallbackContext):
-    res: "Response" = requests.get(f"{protocol}://{ip}:{port}/status")
+    res: "Response" = requests.get(f"{protocol}://{ip}:{port}/status", timeout=TIME_OUT)
     context.bot.send_message(chat_id=update.message.chat_id, text=res.json()["status"])
 
 
 def remove(update: telegram.Update, context: CallbackContext):
     data = {"trap_name": context.args[0]}
     res = requests.post(f"{protocol}://{ip}:{port}/remove", data=json.dumps(data),
-                        headers={"Content-Type": "application/json"})
+                        headers={"Content-Type": "application/json"}, timeout=TIME_OUT)
     if res.status_code < 300:
         update.message.reply_text("👍")
     else:
@@ -45,7 +44,7 @@ def remove(update: telegram.Update, context: CallbackContext):
 
 def clear(update: telegram.Update, context: CallbackContext):
     res = requests.post(f"{protocol}://{ip}:{port}/clear",
-                        headers={"Content-Type": "application/json"})
+                        headers={"Content-Type": "application/json"}, timeout=TIME_OUT)
     if res.status_code < 300:
         update.message.reply_text("👍")
     else:
@@ -57,7 +56,7 @@ def rename(update: telegram.Update, context: CallbackContext):
         update.message.reply_text("👎")
     data = {"old": context.args[0], "new": context.args[1]}
     res = requests.post(f"{protocol}://{ip}:{port}/rename", data=json.dumps(data),
-                        headers={"Content-Type": "application/json"})
+                        headers={"Content-Type": "application/json"}, timeout=TIME_OUT)
     if res.status_code < 300:
         update.message.reply_text("👍")
     else:
