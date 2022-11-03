@@ -9,6 +9,7 @@ TIME_OUT = 10
 protocol = "http"
 # ip = "localhost"
 ip = "192.168.4.1"
+# ip = "192.168.188.116"
 port = "8000"
 t = open("../chat_ids.txt", "r")
 chat_ids = [int(_id) for _id in t.readlines()]
@@ -28,7 +29,10 @@ def start(update: telegram.Update, context: CallbackContext):
 
 
 def status(update: telegram.Update, context: CallbackContext):
-    res: "Response" = requests.get(f"{protocol}://{ip}:{port}/status", timeout=TIME_OUT)
+    while True:
+        res: "Response" = requests.get(f"{protocol}://{ip}:{port}/status", timeout=TIME_OUT)
+        if res.status_code < 300:
+            break
     context.bot.send_message(chat_id=update.message.chat_id, text=res.json()["status"])
 
 
