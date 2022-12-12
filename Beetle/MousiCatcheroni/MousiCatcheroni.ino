@@ -1,13 +1,14 @@
 #include <WiFi.h>
 #include "arduino_secrets.h"
+#include <HTTPClient.h>
 #define sleep_duration_45min 2700000000
 
 
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 WiFiClient client;
-char base_addr[] = "192.168.4.1";
-// char base_addr[] = "192.168.188.116";
+//char base_addr[] = "192.168.4.1";
+char base_addr[] = "192.168.188.116";
 int port = 8000;
 
 const gpio_num_t BUTTON_PIN = GPIO_NUM_0;
@@ -72,14 +73,21 @@ String isOpen() {
 }
 
 void postData(String body, String endpoint) {
-  if (WiFi.status() == WL_CONNECTED) {
-    if (client.connect(base_addr, port)) {
-      String request = "POST /" + endpoint + " HTTP/1.0\n" + "Content-Type: application/json" + "\n" + "Content-Length: " + String(body.length()) + "\n" + "Host: " + String(base_addr) + "\n" + "Connection: close" + "\n" + "user-agent: Apache-HttpClient/4.5.13 (Java/17.0.3)" + "\n" + "Accept-Encoding: gzip,deflate" + "\n\n" + body;
-      //Serial.println(request);
-      client.println(request);
-      client.stop();
+  int respCode = 600;
+  int attempts = 0;
+  while(respCode >= 300 && attempts < 20){
+    attempts += 1;
+  
+    if (WiFi.status() == WL_CONNECTED) {
+      HTTPClient http;
+      http.begin(client, "http://"+String(base_addr)+":"+String(port)+"/"+endpoint);
+      http.addHeader("Content-Type", "application/json");
+      respCode = http.POST(body);
+    } else {
+      setupWifi();
     }
   }
+  delay(100);
 }
 
 float get_voltage() {

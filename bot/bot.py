@@ -8,8 +8,8 @@ TIME_OUT = 10
 
 protocol = "http"
 # ip = "localhost"
-ip = "192.168.4.1"
-# ip = "192.168.188.116"
+#ip = "192.168.4.1"
+ip = "192.168.188.116"
 port = "8000"
 t = open("../chat_ids.txt", "r")
 chat_ids = [int(_id) for _id in t.readlines()]
