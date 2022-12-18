@@ -19,7 +19,7 @@ class TrapCollection:
         self.persit()
 
     def get_status(self):
-        res = ""
+        res = "Status:\n"
         for trap in self.traps.values():
             res += trap.get_status() + "\n"
         return res
@@ -27,7 +27,7 @@ class TrapCollection:
     def get_trap(self, trap_id: str):
         if trap_id not in self.traps:
             new_name = self.next_name()
-            self.add_trap(Trap(trap_id, new_name, False))
+            self.add_trap(Trap(trap_id, new_name, False, 4.00))
         return self.traps[trap_id]
 
     def next_name(self):
@@ -54,12 +54,16 @@ class TrapCollection:
     def close(self, trap_id: str):
         trap = self.get_trap(trap_id)
         trap.change(_open=False)
+        print(f"closing {trap.name}")
         self.persit()
         return trap
 
-    def healthcheck(self, trap_id: str, _open: bool):
-        self.get_trap(trap_id).healthcheck_success(_open)
+    def healthcheck(self, trap_id: str, _open: bool, voltage: float):
+        trap = self.get_trap(trap_id)
+        trap.healthcheck_success(_open)
+        trap.voltage = voltage / 1000
         self.persit()
+        return trap.name
 
     def rename(self, trap_name: str, new_name: str):
         _id = self.names[trap_name]
@@ -67,6 +71,11 @@ class TrapCollection:
         trap.name = new_name
         del self.names[trap_name]
         self.names[new_name] = _id
+
+    def clear(self):
+        self.names = {}
+        self.traps = {}
+        self.persit()
 
     def persit(self):
         filename = filename_for_date(time.localtime())
@@ -88,7 +97,9 @@ class TrapCollection:
                 with open(potential_filename) as file:
                     for line in file.readlines():
                         recovered_trap = Trap.recover(line)
-                        new_trap_collection.traps[recovered_trap.name] = recovered_trap
+                        new_trap_collection.traps[recovered_trap.id] = recovered_trap
+                        new_trap_collection.names[recovered_trap.name] = recovered_trap.id
+
                 break
             else:
                 current_timestamp -= 24 * 60 * 60

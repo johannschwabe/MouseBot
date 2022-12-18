@@ -8,9 +8,11 @@ import traceback
 import sys
 
 protocol = "http"
-ip = "localhost"
+#ip = "localhost"
+ip = "192.168.4.1"
 port = "8000"
-chat_ids = []
+t = open("../chat_ids.txt", "r")
+chat_ids = [int(_id) for _id in t.readlines()]
 
 
 # Define the funciton that shall be executed on Start command /start, which is automatically send when starting the bot
@@ -19,6 +21,8 @@ def start(update: telegram.Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.message.chat_id,
                              text='Action Stations!',
                              parse_mode=telegram.ParseMode.MARKDOWN)
+    print(update.message.chat_id)
+    print(chat_ids)
     if update.message.chat_id not in chat_ids:
         chat_ids.append(update.message.chat_id)
         t = open("../chat_ids.txt", "a")
@@ -41,7 +45,7 @@ def remove(update: telegram.Update, context: CallbackContext):
 
 
 def clear(update: telegram.Update, context: CallbackContext):
-    res = requests.post(f"{protocol}://{ip}:{port}/remove",
+    res = requests.post(f"{protocol}://{ip}:{port}/clear",
                         headers={"Content-Type": "application/json"})
     if res.status_code < 300:
         update.message.reply_text("👍")
