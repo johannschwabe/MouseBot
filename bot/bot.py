@@ -4,12 +4,13 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 import datetime
 import requests
 import json
-import traceback
-import sys
+TIME_OUT = 10
 
 protocol = "http"
-#ip = "localhost"
+
+# ip = "localhost"
 ip = "192.168.4.1"
+# ip = "192.168.188.116"
 port = "8000"
 t = open("../chat_ids.txt", "r")
 chat_ids = [int(_id) for _id in t.readlines()]
@@ -21,8 +22,6 @@ def start(update: telegram.Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.message.chat_id,
                              text='Action Stations!',
                              parse_mode=telegram.ParseMode.MARKDOWN)
-    print(update.message.chat_id)
-    print(chat_ids)
     if update.message.chat_id not in chat_ids:
         chat_ids.append(update.message.chat_id)
         t = open("../chat_ids.txt", "a")
@@ -30,14 +29,17 @@ def start(update: telegram.Update, context: CallbackContext):
 
 
 def status(update: telegram.Update, context: CallbackContext):
-    res: "Response" = requests.get(f"{protocol}://{ip}:{port}/status")
+    while True:
+        res: "Response" = requests.get(f"{protocol}://{ip}:{port}/status", timeout=TIME_OUT)
+        if res.status_code < 300:
+            break
     context.bot.send_message(chat_id=update.message.chat_id, text=res.json()["status"])
 
 
 def remove(update: telegram.Update, context: CallbackContext):
     data = {"trap_name": context.args[0]}
     res = requests.post(f"{protocol}://{ip}:{port}/remove", data=json.dumps(data),
-                        headers={"Content-Type": "application/json"})
+                        headers={"Content-Type": "application/json"}, timeout=TIME_OUT)
     if res.status_code < 300:
         update.message.reply_text("👍")
     else:
@@ -46,7 +48,7 @@ def remove(update: telegram.Update, context: CallbackContext):
 
 def clear(update: telegram.Update, context: CallbackContext):
     res = requests.post(f"{protocol}://{ip}:{port}/clear",
-                        headers={"Content-Type": "application/json"})
+                        headers={"Content-Type": "application/json"}, timeout=TIME_OUT)
     if res.status_code < 300:
         update.message.reply_text("👍")
     else:
@@ -58,7 +60,7 @@ def rename(update: telegram.Update, context: CallbackContext):
         update.message.reply_text("👎")
     data = {"old": context.args[0], "new": context.args[1]}
     res = requests.post(f"{protocol}://{ip}:{port}/rename", data=json.dumps(data),
-                        headers={"Content-Type": "application/json"})
+                        headers={"Content-Type": "application/json"}, timeout=TIME_OUT)
     if res.status_code < 300:
         update.message.reply_text("👍")
     else:
